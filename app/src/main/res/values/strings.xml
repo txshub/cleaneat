@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Clean Eat</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string-array name="placeholder_spinner">
+        <item>Stuff1</item>
+        <item>Stuff2</item>
+        <item>Stuff3</item>
+        <item>Stuff4</item>
+        <item>Stuff5</item>
+        <item>Stuff6</item>
+    </string-array>
+</resources>

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/colorPrimaryDark"
+    android:padding="5dp"
+    tools:context=".SearchActivity">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="horizontal"
+            android:paddingBottom="20dp">
+
+            <SearchView
+                android:id="@+id/searchBox"
+                style="@android:style/Widget.Material.Light.SearchView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_border"
+                android:backgroundTint="@color/colorBackgroundLight"
+                android:iconifiedByDefault="false"
+                android:queryHint="Search..."
+                android:layout_marginRight="5dp"
+                app:layout_constraintEnd_toStartOf="@+id/sortButton"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/sortButton"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_border"
+                android:backgroundTint="@color/colorBackgroundLight"
+                android:text="S"
+                android:layout_marginRight="5dp"
+                android:onClick="onClickSort"
+                app:layout_constraintEnd_toStartOf="@+id/filterButton" />
+
+            <Button
+                android:id="@+id/filterButton"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_border"
+                android:backgroundTint="@color/colorBackgroundLight"
+                android:text="F"
+                android:onClick="onClickFilter"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/sortPanel"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/searchBox"
+                android:layout_marginTop="20dp">
+
+                <RadioGroup
+                    android:id="@+id/sortGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:checked="true"
+                        android:id="@+id/radioRelevance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/round_border"
+                        android:backgroundTint="@color/colorBackgroundLight"
+                        android:text="Relevance"
+                        android:textAlignment="center"
+                        android:textSize="24sp" />
+
+                    <RadioButton
+                        android:id="@+id/radioRatingDesc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Rating Desc."
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/round_border"
+                        android:backgroundTint="@color/colorBackgroundLight"
+                        android:textAlignment="center"
+                        android:textSize="24sp"/>
+
+                    <RadioButton
+                        android:id="@+id/radioRatingAsc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Rating Asc."
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/round_border"
+                        android:backgroundTint="@color/colorBackgroundLight"
+                        android:textAlignment="center"
+                        android:textSize="24sp"/>
+
+                    <RadioButton
+                        android:id="@+id/radioAlphaAsc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Alphabetically Asc."
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/round_border"
+                        android:backgroundTint="@color/colorBackgroundLight"
+                        android:textAlignment="center"
+                        android:textSize="24sp"/>
+
+                    <RadioButton
+                        android:id="@+id/radioAlphaDesc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Alphabetically Desc."
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/round_border"
+                        android:backgroundTint="@color/colorBackgroundLight"
+                        android:textAlignment="center"
+                        android:textSize="24sp"/>
+
+                    <RadioButton
+                        android:id="@+id/radioDistance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Distance"
+                        android:background="@drawable/round_border"
+                        android:backgroundTint="@color/colorBackgroundLight"
+                        android:textAlignment="center"
+                        android:textSize="24sp"/>
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/filterPanel"
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/searchBox"
+                android:layout_marginTop="20dp"
+                android:padding="5dp"
+                android:background="@color/colorBackgroundLight"
+                android:divider="?android:listDivider"
+                android:showDividers="middle">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="Business Type"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerBusiness"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:entries="@array/placeholder_spinner"
+                        android:textAlignment="textEnd">
+
+                    </Spinner>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="Region"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerRegion"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:entries="@array/placeholder_spinner"
+                        android:textAlignment="textEnd">
+
+                    </Spinner>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="Authority"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerAuthority"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:entries="@array/placeholder_spinner"
+                        android:textAlignment="textEnd">
+
+                    </Spinner>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="Minimum Rating"/>
+
+                    <Spinner
+                        android:id="@+id/spinerMinRating"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:entries="@array/placeholder_spinner"
+                        android:textAlignment="textEnd">
+
+                    </Spinner>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="Maximum Distance In Miles"/>
+
+                    <EditText
+                        android:id="@+id/editMiles"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:hint="Any distance"
+                        android:textAlignment="textEnd">
+
+                    </EditText>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <ListView
+            android:id="@+id/establishmentList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent"
+            android:padding="5dp"
+            android:divider="@null"
+            android:dividerHeight="5dp" />
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
