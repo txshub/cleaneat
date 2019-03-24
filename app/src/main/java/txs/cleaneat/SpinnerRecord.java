@@ -4,14 +4,15 @@ public class SpinnerRecord {
     private int id;
     private String stringId;
     private String name;
+    private String regionName;
 
     public SpinnerRecord(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public SpinnerRecord(String stringId, String name) {
-        this.stringId = stringId;
+    public SpinnerRecord(int id, String name, String regionName) {
+        this.id = id;
         this.name = name;
     }
 
@@ -24,6 +25,10 @@ public class SpinnerRecord {
     }
     public String getName() {
         return name;
+    }
+
+    public String getRegionName() {
+        return regionName;
     }
 
     @Override

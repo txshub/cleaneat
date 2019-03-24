@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/colorPrimaryDark"
+    android:padding="5dp"
+    tools:context=".EstablishmentActivity">
+
+    <ProgressBar
+        android:id="@+id/detailsProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/detailsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBackgroundLight"
+        android:orientation="vertical"
+        android:divider="?android:listDivider"
+        android:showDividers="middle"
+        android:padding="5dp">
+
+        <RatingBar
+            android:id="@+id/detailsRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:isIndicator="true"
+            android:progressTint="@color/colorPrimary"
+            android:numStars="5"
+            android:stepSize="1"
+            android:rating="2"/>
+
+        <TextView
+            android:id="@+id/detailsBusiness"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Business Type: blah"
+            android:padding="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/detailsAddress1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Address1"/>
+            <TextView
+                android:id="@+id/detailsAddress2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Address2"/>
+            <TextView
+                android:id="@+id/detailsAddress3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Address3"/>
+            <TextView
+                android:id="@+id/detailsAddress4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Address4"/>
+            <TextView
+                android:id="@+id/detailsPostCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PostCode"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/detailsAuthority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Local Authority"
+            android:padding="10dp"/>
+
+    </LinearLayout>
+
+
+
+
+</android.support.constraint.ConstraintLayout>

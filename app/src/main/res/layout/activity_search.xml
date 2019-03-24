@@ -7,7 +7,9 @@
     android:animateLayoutChanges="true"
     android:background="@color/colorPrimaryDark"
     android:padding="5dp"
-    tools:context=".SearchActivity">
+    tools:context=".SearchActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -48,30 +50,32 @@
                 android:backgroundTint="@color/colorBackgroundLight"
                 android:iconifiedByDefault="false"
                 android:queryHint="Search..."
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
                 app:layout_constraintEnd_toStartOf="@+id/sortButton"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/sortButton"
                 android:layout_width="50dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:background="@drawable/round_border"
                 android:backgroundTint="@color/colorBackgroundLight"
-                android:text="S"
-                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_sort_black_24dp"
+                android:layout_marginEnd="5dp"
                 android:onClick="onClickSort"
-                app:layout_constraintEnd_toStartOf="@+id/filterButton" />
+                app:layout_constraintEnd_toStartOf="@+id/filterButton"
+                android:contentDescription="@string/sort_description" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/filterButton"
                 android:layout_width="50dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:background="@drawable/round_border"
                 android:backgroundTint="@color/colorBackgroundLight"
-                android:text="F"
+                android:src="@drawable/ic_tune_black_24dp"
                 android:onClick="onClickFilter"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                android:contentDescription="@string/filter_description" />
 
             <LinearLayout
                 android:id="@+id/sortPanel"
@@ -96,7 +100,7 @@
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/round_border"
                         android:backgroundTint="@color/colorBackgroundLight"
-                        android:text="Relevance"
+                        android:text="@string/radio_relevance"
                         android:textAlignment="center"
                         android:textSize="24sp" />
 
@@ -104,7 +108,7 @@
                         android:id="@+id/radioRatingDesc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Rating Desc."
+                        android:text="@string/radio_rating_desc"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/round_border"
                         android:backgroundTint="@color/colorBackgroundLight"
@@ -115,7 +119,7 @@
                         android:id="@+id/radioRatingAsc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Rating Asc."
+                        android:text="@string/radio_rating_asc"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/round_border"
                         android:backgroundTint="@color/colorBackgroundLight"
@@ -126,7 +130,7 @@
                         android:id="@+id/radioAlphaAsc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Alphabetically Asc."
+                        android:text="@string/radio_alpha_asc"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/round_border"
                         android:backgroundTint="@color/colorBackgroundLight"
@@ -137,7 +141,7 @@
                         android:id="@+id/radioAlphaDesc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Alphabetically Desc."
+                        android:text="@string/radio_alpha_desc"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/round_border"
                         android:backgroundTint="@color/colorBackgroundLight"
@@ -148,7 +152,7 @@
                         android:id="@+id/radioDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Distance"
+                        android:text="@string/radio_distance"
                         android:background="@drawable/round_border"
                         android:backgroundTint="@color/colorBackgroundLight"
                         android:textAlignment="center"
@@ -159,7 +163,7 @@
 
             <LinearLayout
                 android:id="@+id/filterPanel"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -179,14 +183,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:text="Business Type"/>
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/label_business"/>
 
                     <Spinner
                         android:id="@+id/spinnerBusiness"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:entries="@array/placeholder_spinner"
                         android:textAlignment="textEnd">
 
                     </Spinner>
@@ -200,14 +203,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:text="Region"/>
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/label_region"/>
 
                     <Spinner
                         android:id="@+id/spinnerRegion"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:entries="@array/placeholder_spinner"
                         android:textAlignment="textEnd">
 
                     </Spinner>
@@ -221,14 +223,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:text="Authority"/>
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/label_authority"/>
 
                     <Spinner
                         android:id="@+id/spinnerAuthority"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:entries="@array/placeholder_spinner"
                         android:textAlignment="textEnd">
 
                     </Spinner>
@@ -242,14 +243,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:text="Minimum Rating"/>
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/label_min_rating"/>
 
                     <Spinner
-                        android:id="@+id/spinerMinRating"
+                        android:id="@+id/spinnerMinRating"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:entries="@array/placeholder_spinner"
                         android:textAlignment="textEnd">
 
                     </Spinner>
@@ -264,15 +264,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:text="Maximum Distance In Miles"/>
+                        android:layout_marginEnd="5dp"
+                        android:labelFor="@+id/editMiles"
+                        android:text="@string/label_max_distance"/>
 
                     <EditText
                         android:id="@+id/editMiles"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:hint="Any distance"
+                        android:singleLine="true"
+                        android:hint="@string/hint_distance"
                         android:textAlignment="textEnd">
 
                     </EditText>

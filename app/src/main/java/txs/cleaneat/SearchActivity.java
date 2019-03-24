@@ -1,11 +1,28 @@
 package txs.cleaneat;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -13,7 +30,6 @@ import android.widget.RadioGroup;
 import android.widget.SearchView;
 import android.widget.Spinner;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,74 +47,106 @@ import java.util.Map;
 
 public class SearchActivity extends AppCompatActivity {
 
-    private enum RequestType {ESTABLISHMENT, BUSINESS, REGION, AUTHORITY};
+    // Request types for a multi-purpose request method
+    private enum RequestType {ESTABLISHMENT, BUSINESS, REGION, AUTHORITY}
 
-    public final String RELEVANCE = "relevance";
-    public final String RATING_DESC = "rating";
-    public final String RATING_ASC = "desc_rating";
-    public final String DISTANCE = "distance";
-    public final String ALPHA_ASC = "alpha";
-    public final String ALPHA_DESC = "desc_alpha";
+    // API URL
+    private final String BUSINESSTYPES_URL = "http://api.ratings.food.gov.uk/BusinessTypes/basic";
+    private final String REGIONS_URL = "http://api.ratings.food.gov.uk/Regions/basic";
+    private final String AUTHORITIES_URL = "http://api.ratings.food.gov.uk/Authorities";
 
+    // Sorting options
+    private final String RELEVANCE = "relevance";
+    private final String RATING_DESC = "rating";
+    private final String RATING_ASC = "desc_rating";
+    private final String DISTANCE = "distance";
+    private final String ALPHA_ASC = "alpha";
+    private final String ALPHA_DESC = "desc_alpha";
+
+    // Views
     private ListView listView;
     private ProgressBar progressBar;
     private SearchView search;
     private LinearLayout sortPanel;
     private LinearLayout filterPanel;
-    private Button sortButton;
-    private Button filterButton;
+    private ImageButton sortButton;
+    private ImageButton filterButton;
+    private Spinner authoritySpinner;
 
-    private ArrayList<Establishment> establishments = new ArrayList<Establishment>();
+    // ListView elements
+    private ArrayList<Establishment> establishments = new ArrayList<>();
     private EstablishmentListAdapter establishmentsAdapter;
 
-    private ArrayList<SpinnerRecord> businessTypes = new ArrayList<SpinnerRecord>();
+    // Spinners
+    private ArrayList<SpinnerRecord> businessTypes = new ArrayList<>();
     private ArrayAdapter<SpinnerRecord> businessTypesAdapter;
 
-    private ArrayList<SpinnerRecord> regions = new ArrayList<SpinnerRecord>();
+    private ArrayList<SpinnerRecord> regions = new ArrayList<>();
     private ArrayAdapter<SpinnerRecord> regionsAdapter;
 
-    private ArrayList<SpinnerRecord> authorities = new ArrayList<SpinnerRecord>();
+    private ArrayList<SpinnerRecord> authorities = new ArrayList<>();
     private ArrayAdapter<SpinnerRecord> authoritiesAdapter;
 
-    private String sortType = "relevance";
+    // Location
+    private final int FINE_LOCATION_PERMISSION = 1;
+    private LocationManager locManager;
+    private LocationListener locListener;
+    private double longitude = 0 , latitude = 0;
+
+    // Filters
     private String searchTerm = "";
+    private String sortType = RELEVANCE;
+    private int minRating = 0;
+    private int radius = -1;
+    private SpinnerRecord businessType = new SpinnerRecord(-1, "All");
+    private SpinnerRecord region = new SpinnerRecord(-1, "Any");
+    private SpinnerRecord authority = new SpinnerRecord(-1, "Any", "");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        listView = (ListView) findViewById(R.id.establishmentList);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        // Get views
+        listView = findViewById(R.id.establishmentList);
+        progressBar = findViewById(R.id.progressBar);
 
-        sortPanel = (LinearLayout) findViewById(R.id.sortPanel);
-        filterPanel = (LinearLayout) findViewById(R.id.filterPanel);
+        sortPanel = findViewById(R.id.sortPanel);
+        filterPanel = findViewById(R.id.filterPanel);
 
-        sortButton = (Button) findViewById(R.id.sortButton);
-        filterButton = (Button) findViewById(R.id.filterButton);
+        sortButton = findViewById(R.id.sortButton);
+        filterButton = findViewById(R.id.filterButton);
 
-        RadioGroup sortGroup = (RadioGroup) findViewById(R.id.sortGroup);
+        RadioGroup sortGroup = findViewById(R.id.sortGroup);
 
+        // Set up ListView
         establishmentsAdapter = new EstablishmentListAdapter(this, 0, establishments);
         listView.setAdapter(establishmentsAdapter);
 
-        Spinner businessTypeSpinner = (Spinner) findViewById(R.id.spinnerBusiness);
-        businessTypesAdapter = new ArrayAdapter<SpinnerRecord>(this,
+        // Set up spinners
+        Spinner businessTypeSpinner = findViewById(R.id.spinnerBusiness);
+        businessTypesAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, businessTypes);
         businessTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         businessTypeSpinner.setAdapter(businessTypesAdapter);
-        Spinner regionSpinner = (Spinner) findViewById(R.id.spinnerRegion);
-        regionsAdapter = new ArrayAdapter<SpinnerRecord>(this,
+        Spinner regionSpinner = findViewById(R.id.spinnerRegion);
+        regionsAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, regions);
         regionSpinner.setAdapter(regionsAdapter);
         regionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner authoritySpinner = (Spinner) findViewById(R.id.spinnerAuthority);
-        authoritiesAdapter = new ArrayAdapter<SpinnerRecord>(this,
+        authoritySpinner = findViewById(R.id.spinnerAuthority);
+        authoritiesAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, authorities);
         authoritySpinner.setAdapter(authoritiesAdapter);
         authoritiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner minRatingSpinner = findViewById(R.id.spinnerMinRating);
+        ArrayAdapter<String> ratingAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, new String[] {"0", "1", "2", "3", "4", "5"});
+        minRatingSpinner.setAdapter(ratingAdapter);
+        ratingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        search = (SearchView) findViewById(R.id.searchBox);
+        // Search input event listener
+        search = findViewById(R.id.searchBox);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -113,6 +161,48 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        // Radius input event listener
+        final EditText editMiles = findViewById(R.id.editMiles);
+        editMiles.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    editMiles.clearFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+        if (TextUtils.isEmpty(editMiles.getText().toString().trim())) {
+            radius = -1;
+        }
+        editMiles.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    EditText et = (EditText) v;
+                    String text = et.getText().toString();
+                    boolean changed = false;
+                    if (text.isEmpty()) {
+                        if (radius != -1) {
+                            radius = -1;
+                            changed = true;
+                        }
+                    } else {
+                        int newRadius = Integer.parseInt(text);
+                        if (newRadius != radius) {
+                            radius = newRadius;
+                            changed = true;
+                        }
+                    }
+                    if (changed) {
+                        requestItems();
+                    }
+                }
+            }
+        });
+
+        // Sorting option event listener
         sortGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -140,15 +230,117 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-        sortType = RELEVANCE;
-        requestItems();
+        // Set up spinners event listeners
+        businessTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                businessType = (SpinnerRecord) parent.getItemAtPosition(position);
+                requestItems();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                region = (SpinnerRecord) parent.getItemAtPosition(position);
+                requestSpinnerRecords(RequestType.AUTHORITY, AUTHORITIES_URL);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        authoritySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                authority = (SpinnerRecord) parent.getItemAtPosition(position);
+                requestItems();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        minRatingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                minRating = position;
+                requestItems();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
-        requestSpinnerRecords(RequestType.BUSINESS,
-                "http://api.ratings.food.gov.uk/BusinessTypes/basic");
-        requestSpinnerRecords(RequestType.REGION,
-                "http://api.ratings.food.gov.uk/Regions/basic");
-        requestSpinnerRecords(RequestType.AUTHORITY,
-                "http://api.ratings.food.gov.uk/Authorities/basic");
+        // Set up listview event listeners
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Establishment e = (Establishment) parent.getItemAtPosition(position);
+                Intent intent = new Intent(SearchActivity.this, EstablishmentActivity.class);
+                intent.putExtra("id", e.getId());
+                intent.putExtra("name", e.getName());
+                startActivity(intent);
+            }
+        });
+
+        // Location setup
+        locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.e("location", location.getLatitude() + " " + location.getLongitude());
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+            }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) { }
+            @Override
+            public void onProviderEnabled(String provider) { }
+            @Override
+            public void onProviderDisabled(String provider) { }
+        };
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new AlertDialog.Builder(this)
+                        .setMessage(getResources().getString(R.string.dialog_permission))
+                        .setPositiveButton(getResources().getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                requestLocPerms();
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                requestLocPerms();
+            }
+        } else {
+            attachLocManager();
+        }
+
+        // Initial requests
+        requestSpinnerRecords(RequestType.BUSINESS, BUSINESSTYPES_URL);
+        requestSpinnerRecords(RequestType.REGION, REGIONS_URL);
+        requestSpinnerRecords(RequestType.AUTHORITY, AUTHORITIES_URL);
+    }
+
+    // Location setup
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case FINE_LOCATION_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    attachLocManager();
+                }
+            }
+        }
+    }
+    public void attachLocManager() {
+        try {
+            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locListener);
+        } catch (SecurityException err) {
+            Log.e("error", err.toString());
+        }
+    }
+    public void requestLocPerms() {
+        ActivityCompat.requestPermissions(SearchActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_PERMISSION);
     }
 
     public void onClickSort(View view) {
@@ -176,11 +368,24 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private String getURL() {
-        String base = "http://api.ratings.food.gov.uk/Establishments?";
-        String name = "name=";
-        name += searchTerm;
-        String sort = "&sortOptionKey=" + sortType;
-        String url = base + name + sort;
+        String url = "http://api.ratings.food.gov.uk/Establishments?";
+        url += "name=" + searchTerm;
+        if (latitude != 0 && longitude != 0) {
+            url += "&longitude=" + longitude + "&latitude=" + latitude;
+        }
+        url += "&sortOptionKey=" + sortType;
+        if (!businessType.getId().equals("-1")) {
+            url += "&businessTypeId=" + businessType.getId();
+        }
+        if (!authority.getId().equals("-1")) {
+            url += "&localAuthorityId=" + authority.getId();
+        }
+        if (radius != -1) {
+            url += "&maxDistanceLimit=" + radius;
+        } else {
+            url += "&maxDistanceLimit=" + 9999;
+        }
+        url += "&ratingKey=" + minRating + "&ratingOperatorKey=GreaterThanOrEqual";
         url += "&pageNumber=1&pageSize=30";
         return url;
     }
@@ -202,7 +407,7 @@ public class SearchActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.GONE);
                             listView.setVisibility(View.VISIBLE);
 
-                            Log.e(" url", getURL().toString());
+                            Log.e(" url", getURL());
                             Log.e(" result", response.toString());
                         } catch (Exception e) {
                             Log.e(" error","ERROR");
@@ -216,9 +421,8 @@ public class SearchActivity extends AppCompatActivity {
                 }
         ){
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                //headers.put("Content-Type", "application/json");
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
                 headers.put("x-api-version", "2");
                 return headers;
             }
@@ -232,9 +436,10 @@ public class SearchActivity extends AppCompatActivity {
             JSONArray items = response.getJSONArray("establishments");
             for (int i = 0; i < items.length(); i++) {
                 JSONObject item = items.getJSONObject(i);
+                int id = item.getInt("FHRSID");
                 String name = item.getString("BusinessName");
                 String rating = item.getString("RatingValue");
-                Establishment e = new Establishment(name, rating);
+                Establishment e = new Establishment(id, name, rating);
                 establishments.add(e);
             }
         }
@@ -244,7 +449,7 @@ public class SearchActivity extends AppCompatActivity {
         establishmentsAdapter.notifyDataSetChanged();
     }
 
-    private void requestSpinnerRecords(RequestType requestType, String url) {
+    private void requestSpinnerRecords(RequestType requestType, final String url) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         final RequestType type = requestType;
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url,null,
@@ -254,6 +459,7 @@ public class SearchActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response)
                     {
                         try {
+                            Log.e("requesturl", url);
                             Log.e("request", response.toString());
                             switch(type) {
                                 case BUSINESS:
@@ -267,19 +473,21 @@ public class SearchActivity extends AppCompatActivity {
                                     break;
                             }
                         } catch (Exception e) {
-                            Log.e(" error","ERROR");
+                            Log.e(" responseerror",e.toString());
                         }
                     }
                 },
                 new Response.ErrorListener()
                 {
                     @Override
-                    public void onErrorResponse(VolleyError error) {}
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("requesterror", error.toString());
+                    }
                 }
         ){
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
                 headers.put("x-api-version", "2");
                 return headers;
             }
@@ -305,7 +513,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void populateRegion(JSONObject response) {
         regions.clear();
-        regions.add(new SpinnerRecord(-1, "Any"));
+        regions.add(new SpinnerRecord(-1, getResources().getString(R.string.option_any)));
         try {
             JSONArray array = response.getJSONArray("regions");
             for (int i = 0; i < array.length(); i++) {
@@ -322,18 +530,26 @@ public class SearchActivity extends AppCompatActivity {
 
     private void populateAuthority(JSONObject response) {
         authorities.clear();
-        authorities.add(new SpinnerRecord("", "Any"));
+        if (region.getId().equals("-1")) {
+            authorities.add(new SpinnerRecord(-1, getResources().getString(R.string.option_any), ""));
+        }
         try {
             JSONArray array = response.getJSONArray("authorities");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
-                String code = object.getString("LocalAuthorityIdCode");
+                int id = object.getInt("LocalAuthorityId");
                 String name = object.getString("Name");
-                authorities.add(new SpinnerRecord(code, name));
+                String regionName = object.getString("RegionName");
+                if (region.getId().equals("-1") || region.getName().equals(regionName)) {
+                    authorities.add(new SpinnerRecord(id, name, regionName));
+                }
             }
         } catch (JSONException e) {
             Log.e("error", e.toString());
         }
         authoritiesAdapter.notifyDataSetChanged();
+        authoritySpinner.setSelection(0);
+        authority = authorities.get(0);
+        requestItems();
     }
 }

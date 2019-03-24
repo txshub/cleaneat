@@ -15,11 +15,29 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/rating"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:textColor="@color/colorAccent" />
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_rating"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="@color/colorPrimaryDark" />
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="?android:attr/ratingBarStyleSmall"
+            android:isIndicator="true"
+            android:progressTint="@color/colorPrimaryDark"
+            android:numStars="5"
+            android:stepSize="1"/>
+    </LinearLayout>
+
 
 </LinearLayout>

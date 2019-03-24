@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -33,11 +34,11 @@ class EstablishmentListAdapter extends ArrayAdapter<Establishment> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.establishment_list_layout, null);
 
-        TextView description = (TextView) view.findViewById(R.id.name);
-        TextView rating = (TextView) view.findViewById(R.id.rating);
+        TextView description = view.findViewById(R.id.name);
+        RatingBar ratingBar = view.findViewById(R.id.ratingBar);
 
         description.setText(establishment.getName());
-        rating.setText("Rating: " + establishment.getRating());
+        ratingBar.setRating(Integer.parseInt(establishment.getRating()));
 
         return view;
     }

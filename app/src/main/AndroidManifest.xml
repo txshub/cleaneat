@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="txs.cleaneat">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,12 +22,14 @@
         </activity>
         <activity
             android:name=".SearchActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Search Restaurant"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".FavouriteActivity"
-            android:label="Favourite"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".EstablishmentActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Establishment Details" />
+        <activity android:name=".FavouriteActivity"></activity>
     </application>
 
 </manifest>
