@@ -284,7 +284,21 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <TextView
+            android:id="@+id/searchNoItems"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:textSize="20dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:background="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="@string/search_no_items"/>
+
         <ListView
+            android:visibility="visible"
             android:id="@+id/establishmentList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

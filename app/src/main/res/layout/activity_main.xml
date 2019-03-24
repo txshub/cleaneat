@@ -16,31 +16,44 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center"/>
+
         <Button
             android:id="@+id/searchButton"
-            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:elevation="0dp"
-            android:text="Search Restaurant"
-            android:onClick="onClickSearch" />
+            android:drawableLeft="@drawable/ic_search_black_24dp"
+            android:drawableTint="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimaryDark"
+            android:background="@drawable/round_border"
+            android:backgroundTint="@color/colorPrimary"
+            android:padding="20dp"
+            android:textAllCaps="false"
+            android:layout_margin="10dp"
+            android:onClick="onClickSearch"
+            android:text="@string/main_search"
+            android:textSize="20dp"/>
 
         <Button
             android:id="@+id/favouritesButton"
-            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Favourites"
-            android:onClick="onClickFavourites"/>
+            android:drawableLeft="@drawable/ic_favorite_white_24dp"
+            android:drawableTint="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimaryDark"
+            android:background="@drawable/round_border"
+            android:backgroundTint="@color/colorPrimary"
+            android:padding="20dp"
+            android:textAllCaps="false"
+            android:layout_margin="10dp"
+            android:onClick="onClickFavourites"
+            android:text="@string/main_favourites"
+            android:textSize="20dp" />
 
-        <Button
-            android:id="@+id/settingsButton"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Settings"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -4,6 +4,16 @@
 
     <string name="label_rating">Rating</string>
 
+    <string name="main_search">Search for establishment</string>
+    <string name="main_favourites">Favourites</string>
+
+    <string name="favourites_no_items">You don\'t have any favourite establishments!</string>
+    <string name="search_no_items">Sorry, we did not find any establishments matching your criteria!</string>
+
+    <string name="favourites_toast_add">Added to favourites!</string>
+    <string name="favourites_toast_remove">Removed from favourites!</string>
+    <string name="toast_location">Please turn location on and adjust permission!</string>
+
     <string name="hint_search">Search...</string>
     <string name="radio_relevance">Relevance</string>
     <string name="radio_rating_desc">Rating Desc.</string>

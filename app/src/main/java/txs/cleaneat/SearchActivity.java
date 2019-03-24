@@ -1,9 +1,11 @@
 package txs.cleaneat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -29,7 +31,10 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -43,7 +48,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -72,6 +79,7 @@ public class SearchActivity extends AppCompatActivity {
     private ImageButton sortButton;
     private ImageButton filterButton;
     private Spinner authoritySpinner;
+    private TextView noItems;
 
     // ListView elements
     private ArrayList<Establishment> establishments = new ArrayList<>();
@@ -102,12 +110,18 @@ public class SearchActivity extends AppCompatActivity {
     private SpinnerRecord region = new SpinnerRecord(-1, "Any");
     private SpinnerRecord authority = new SpinnerRecord(-1, "Any", "");
 
+    // Favourites
+    private Set<String> favourites;
+    private SharedPreferences sharedPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
         // Get views
+        noItems = findViewById(R.id.searchNoItems);
+
         listView = findViewById(R.id.establishmentList);
         progressBar = findViewById(R.id.progressBar);
 
@@ -196,6 +210,9 @@ public class SearchActivity extends AppCompatActivity {
                         }
                     }
                     if (changed) {
+                        if (latitude == 0 && longitude == 0){
+                            Toast.makeText(SearchActivity.this, getResources().getString(R.string.toast_location), Toast.LENGTH_SHORT).show();
+                        }
                         requestItems();
                     }
                 }
@@ -215,6 +232,9 @@ public class SearchActivity extends AppCompatActivity {
                         break;
                     case R.id.radioDistance:
                         sortType = DISTANCE;
+                        if (latitude == 0 && longitude == 0){
+                            Toast.makeText(SearchActivity.this, getResources().getString(R.string.toast_location), Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     case R.id.radioRatingAsc:
                         sortType = RATING_ASC;
@@ -276,7 +296,8 @@ public class SearchActivity extends AppCompatActivity {
                 Intent intent = new Intent(SearchActivity.this, EstablishmentActivity.class);
                 intent.putExtra("id", e.getId());
                 intent.putExtra("name", e.getName());
-                startActivity(intent);
+                intent.putExtra("index", position);
+                startActivityForResult(intent, 1);
             }
         });
 
@@ -314,6 +335,9 @@ public class SearchActivity extends AppCompatActivity {
         } else {
             attachLocManager();
         }
+
+        // Set up favourites
+        sharedPref = getSharedPreferences("CleanEatFavourites", Context.MODE_PRIVATE);
 
         // Initial requests
         requestSpinnerRecords(RequestType.BUSINESS, BUSINESSTYPES_URL);
@@ -395,19 +419,25 @@ public class SearchActivity extends AppCompatActivity {
         listView.setVisibility(View.GONE);
 
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        Log.e(" url", getURL());
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, getURL(),null,
                 new Response.Listener<JSONObject>()
                 {
                     @Override
                     public void onResponse(JSONObject response)
                     {
+                        Log.e("raw result", response.toString());
                         try {
                             populateList(response);
 
                             progressBar.setVisibility(View.GONE);
-                            listView.setVisibility(View.VISIBLE);
-
-                            Log.e(" url", getURL());
+                            if (establishments.isEmpty()) {
+                                noItems.setVisibility(View.VISIBLE);
+                                listView.setVisibility(View.GONE);
+                            } else {
+                                noItems.setVisibility(View.GONE);
+                                listView.setVisibility(View.VISIBLE);
+                            }
                             Log.e(" result", response.toString());
                         } catch (Exception e) {
                             Log.e(" error","ERROR");
@@ -427,11 +457,18 @@ public class SearchActivity extends AppCompatActivity {
                 return headers;
             }
         };
+        getRequest.setRetryPolicy(new DefaultRetryPolicy(
+                5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(getRequest);
     }
 
     private void populateList(JSONObject response) {
         establishments.clear();
+        favourites = sharedPref.getStringSet("favourites", new HashSet<String>());
+        Log.e("SearchFavs", favourites.toString());
+
         try{
             JSONArray items = response.getJSONArray("establishments");
             for (int i = 0; i < items.length(); i++) {
@@ -439,7 +476,7 @@ public class SearchActivity extends AppCompatActivity {
                 int id = item.getInt("FHRSID");
                 String name = item.getString("BusinessName");
                 String rating = item.getString("RatingValue");
-                Establishment e = new Establishment(id, name, rating);
+                Establishment e = new Establishment(id, name, rating, favourites.contains(String.valueOf(id)));
                 establishments.add(e);
             }
         }
@@ -551,5 +588,21 @@ public class SearchActivity extends AppCompatActivity {
         authoritySpinner.setSelection(0);
         authority = authorities.get(0);
         requestItems();
+    }
+
+    // Result intent
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                int index = data.getIntExtra("index", -1);
+                int favChange = data.getIntExtra("favChange", -1);
+                Establishment e = establishments.get(index);
+                if ((favChange == 0 && e.isFavourite()) || (favChange == 1 && !e.isFavourite())) {
+                    e.toggleFavourite();
+                    establishmentsAdapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
 }
