@@ -1,5 +1,8 @@
 package txs.cleaneat;
 
+/**
+ * Class holding information about entities that populate the spinners
+ */
 public class SpinnerRecord {
     private int id;
     private String stringId;

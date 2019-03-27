@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -27,17 +26,22 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Activity displaying establishment details
+ */
 public class EstablishmentActivity extends AppCompatActivity {
-
 
     private LinearLayout layout;
     private ProgressBar progress;
     private RatingBar detailsRating;
+    private TextView detailsRatingDate;
     private TextView detailsBusiness;
     private TextView detailsAuthority;
     private TextView detailsAddress1;
@@ -77,6 +81,7 @@ public class EstablishmentActivity extends AppCompatActivity {
         progress.setVisibility(View.VISIBLE);
 
         detailsRating = findViewById(R.id.detailsRating);
+        detailsRatingDate = findViewById(R.id.detailsRatingDate);
         detailsBusiness = findViewById(R.id.detailsBusiness);
         detailsAuthority = findViewById(R.id.detailsAuthority);
         detailsAddress1 = findViewById(R.id.detailsAddress1);
@@ -90,9 +95,6 @@ public class EstablishmentActivity extends AppCompatActivity {
 
     private boolean isFavourite() {
         Set<String> favourites = sharedPref.getStringSet("favourites", null);
-
-        Log.e("favourites", favourites == null ? "null" : favourites.toString());
-
         final String ID = String.valueOf(id);
         return favourites != null && favourites.contains(ID);
     }
@@ -115,8 +117,6 @@ public class EstablishmentActivity extends AppCompatActivity {
         } else {
             return;
         }
-
-        Log.e("favouritesNew", favourites.toString());
 
         editor.clear();
         editor.putStringSet("favourites", favourites);
@@ -162,6 +162,7 @@ public class EstablishmentActivity extends AppCompatActivity {
     private void populateDetails(JSONObject response) {
         try{
             String ratingString = response.getString("RatingValue");
+            String ratingDateString = response.getString("RatingDate");
             String address1 = response.getString("AddressLine1");
             String address2 = response.getString("AddressLine2");
             String address3 = response.getString("AddressLine3");
@@ -171,6 +172,17 @@ public class EstablishmentActivity extends AppCompatActivity {
             String business = response.getString("BusinessType");
 
             detailsRating.setRating(Integer.parseInt(ratingString));
+
+            try {
+                SimpleDateFormat inDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat outDate = new SimpleDateFormat("dd-MM-yyy");
+                String dateText = outDate.format(inDate.parse(ratingDateString));
+                detailsRatingDate.setText(
+                        getResources().getString(R.string.details_label_rating_date) + ": " + dateText);
+            } catch (ParseException e) {
+                Log.e("error", e.toString());
+                detailsRatingDate.setVisibility(View.GONE);
+            }
 
             if (business.trim().isEmpty()) {
                 detailsBusiness.setText("No business type available");

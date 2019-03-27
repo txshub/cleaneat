@@ -189,7 +189,7 @@
                     <Spinner
                         android:id="@+id/spinnerBusiness"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:textAlignment="textEnd">
 
                     </Spinner>
@@ -209,7 +209,7 @@
                     <Spinner
                         android:id="@+id/spinnerRegion"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:textAlignment="textEnd">
 
                     </Spinner>
@@ -229,7 +229,7 @@
                     <Spinner
                         android:id="@+id/spinnerAuthority"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:textAlignment="textEnd">
 
                     </Spinner>
@@ -249,7 +249,7 @@
                     <Spinner
                         android:id="@+id/spinnerMinRating"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:textAlignment="textEnd">
 
                     </Spinner>

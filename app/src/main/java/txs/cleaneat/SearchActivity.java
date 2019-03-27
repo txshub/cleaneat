@@ -15,9 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -407,7 +405,7 @@ public class SearchActivity extends AppCompatActivity {
         if (radius != -1) {
             url += "&maxDistanceLimit=" + radius;
         } else {
-            url += "&maxDistanceLimit=" + 9999;
+            url += "&maxDistanceLimit=" + 100;
         }
         url += "&ratingKey=" + minRating + "&ratingOperatorKey=GreaterThanOrEqual";
         url += "&pageNumber=1&pageSize=30";
@@ -585,7 +583,7 @@ public class SearchActivity extends AppCompatActivity {
             Log.e("error", e.toString());
         }
         authoritiesAdapter.notifyDataSetChanged();
-        authoritySpinner.setSelection(0);
+        authoritySpinner.setSelection(0, true);
         authority = authorities.get(0);
         requestItems();
     }

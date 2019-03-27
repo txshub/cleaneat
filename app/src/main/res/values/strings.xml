@@ -29,6 +29,12 @@
     <string name="label_min_rating">Minimum Rating</string>
     <string name="label_max_distance">Maximum Distance in Miles</string>
 
+    <string name="details_label_authority">Local Authority</string>
+    <string name="details_label_rating">Rating</string>
+    <string name="details_label_rating_date">Date of last inspection</string>
+    <string name="details_label_type">Type</string>
+    <string name="details_label_address">Address</string>
+
     <string name="dialog_permission">In order to use the distance features, please allow the application to use your location.</string>
     <string name="dialog_ok">OK</string>
 

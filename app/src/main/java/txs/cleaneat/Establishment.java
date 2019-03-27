@@ -1,5 +1,8 @@
 package txs.cleaneat;
 
+/**
+ * Class representing an establishment
+ */
 public class Establishment {
 
     private Integer id;

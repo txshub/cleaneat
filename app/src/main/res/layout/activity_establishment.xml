@@ -31,22 +31,48 @@
         android:showDividers="middle"
         android:padding="5dp">
 
-        <RatingBar
-            android:id="@+id/detailsRating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:isIndicator="true"
-            android:progressTint="@color/colorPrimary"
-            android:numStars="5"
-            android:stepSize="1"
-            android:rating="2"/>
-
-        <TextView
-            android:id="@+id/detailsBusiness"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Business Type: blah"
-            android:padding="10dp"/>
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:text="@string/details_label_rating"/>
+            <RatingBar
+                android:id="@+id/detailsRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:progressTint="@color/colorPrimary"
+                android:numStars="5"
+                android:stepSize="1"/>
+            <TextView
+                android:id="@+id/detailsRatingDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:text="@string/details_label_type"/>
+            <TextView
+                android:id="@+id/detailsBusiness"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,38 +81,49 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/detailsAddress1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Address1"/>
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:text="@string/details_label_address"/>
+            <TextView
+                android:id="@+id/detailsAddress1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/detailsAddress2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Address2"/>
+                android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/detailsAddress3"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Address3"/>
+                android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/detailsAddress4"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Address4"/>
+                android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/detailsPostCode"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="PostCode"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/detailsAuthority"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Local Authority"
-            android:padding="10dp"/>
+            android:orientation="vertical"
+            android:padding="10dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:text="@string/details_label_authority"/>
+            <TextView
+                android:id="@+id/detailsAuthority"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
 
     </LinearLayout>
 

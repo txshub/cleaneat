@@ -19,7 +19,6 @@ class EstablishmentListAdapter extends ArrayAdapter<Establishment> {
     private Context context;
     private List<Establishment> establishments;
 
-    //constructor, call on creation
     public EstablishmentListAdapter(Context context, int resource, ArrayList<Establishment> objects) {
         super(context, resource, objects);
 
@@ -27,12 +26,10 @@ class EstablishmentListAdapter extends ArrayAdapter<Establishment> {
         this.establishments = objects;
     }
 
-    //called when rendering the list
     public View getView(int position, View convertView, ViewGroup parent) {
 
         Establishment establishment = establishments.get(position);
 
-        //get the inflater and inflate the XML layout for each item
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.establishment_list_layout, null);
 
